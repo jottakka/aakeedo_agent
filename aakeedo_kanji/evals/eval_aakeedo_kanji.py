@@ -9,7 +9,7 @@ from arcade.sdk.eval import (
 
 import arcade_aakeedo_kanji
 from arcade_aakeedo_kanji.tools.hello import say_hello
-from arcade_aakeedo_kanji.tools.wakani_test import get_user_information
+from arcade_aakeedo_kanji.tools.wakani_api_tools import get_user_information
 
 
 # Evaluation rubric

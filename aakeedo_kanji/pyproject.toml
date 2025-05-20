@@ -9,6 +9,8 @@ python = "^3.10"
 arcade-ai = "^1.0.5"
 pytz = "^2025.2"
 python-dateutil = "^2.9.0.post0"
+pydantic-settings = "^2.9.1"
+pytest-mock = "^3.14.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.0"
@@ -35,6 +37,7 @@ show_error_codes = "True"
 ignore_missing_imports = "True"
 
 [tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
 
 [tool.coverage.report]
