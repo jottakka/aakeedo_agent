@@ -9,6 +9,8 @@ from arcade.sdk.eval import (
 
 import arcade_aakeedo_kanji
 from arcade_aakeedo_kanji.tools.hello import say_hello
+from arcade_aakeedo_kanji.tools.wakani_test import get_user_information
+
 
 # Evaluation rubric
 rubric = EvalRubric(
@@ -45,6 +47,13 @@ def aakeedo_kanji_eval_suite() -> EvalSuite:
             {"role": "user", "content": "My friend's name is John Doe."},
             {"role": "assistant", "content": "It is great that you have a friend named John Doe!"},
         ],
+    )
+    
+    suite.add_case(
+        name="test wakani",
+        user_message="He's actually right here, say hi to him!",
+        expected_tool_calls=[ExpectedToolCall(func=get_user_information, args = {"name" : "nobody"})],
+        rubric=rubric,
     )
 
     return suite

@@ -34,7 +34,7 @@ clean-build: ## clean build artifacts
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@poetry run pytest -W ignore -v --cov --cov-config=pyproject.toml --cov-report=xml
+	@poetry run pytest -W ignore -v --cov --cov-config=pyproject.toml --cov-report=xml  --log-cli-level=DEBUG
 
 .PHONY: coverage
 coverage: ## Generate coverage report

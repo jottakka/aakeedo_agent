@@ -7,6 +7,8 @@ authors = ["jottakka <fjlimal@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 arcade-ai = "^1.0.5"
+pytz = "^2025.2"
+python-dateutil = "^2.9.0.post0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.0"
