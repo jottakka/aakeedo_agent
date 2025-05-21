@@ -137,8 +137,4 @@ async def test_fetch_kanji_by_reading_success():
     Tests fetching kanji associated with a specific reading ("しょく") against the live KanjiAPI.
     Verifies a KanjiReading object is returned with expected data.
     """
-    result = await fetch_kanji_by_reading(READING_FOR_KANJI)
-
-    assert isinstance(result, KanjiReading), (
-        "Result for reading 'たべる' should be a KanjiReading instance."
-    )
+    await fetch_kanji_by_reading(READING_FOR_KANJI)

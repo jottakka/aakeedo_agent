@@ -13,7 +13,7 @@ from arcade_aakeedo_kanji.http_clients.kanji_api_http_client import (
 async def get_kanji_details(
     kanji_char: Annotated[str, "A single Japanese kanji character (e.g., '桜', '字')."],
 ) -> Annotated[
-    str | None,
+    str,
     "A JSON string with kanji details (see docstring for structure), or an error is raised.",
 ]:
     """
