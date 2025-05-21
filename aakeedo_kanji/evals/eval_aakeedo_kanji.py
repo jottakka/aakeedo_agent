@@ -4,56 +4,111 @@ from arcade.sdk.eval import (
     EvalSuite,
     ExpectedToolCall,
     SimilarityCritic,
-    tool_eval,
+    tool_eval
 )
 
-import arcade_aakeedo_kanji
-from arcade_aakeedo_kanji.tools.hello import say_hello
-from arcade_aakeedo_kanji.tools.wakani_api_tools import get_user_information
+from arcade_aakeedo_kanji.tools import kanji_api_tools
 
-
-# Evaluation rubric
-rubric = EvalRubric(
-    fail_threshold=0.85,
-    warn_threshold=0.95,
+from arcade_aakeedo_kanji.tools.kanji_api_tools import (
+    get_kanji_details,
+    list_joyo_kanji,
+    get_kanji_list_by_category,
+    get_kanji_by_reading,
+    get_words_for_kanji
 )
 
+default_rubric = EvalRubric(
+    fail_threshold=0.80,
+    warn_threshold=0.90,
+)
 
-catalog = ToolCatalog()
-catalog.add_module(arcade_aakeedo_kanji)
+kanji_tool_catalog = ToolCatalog()
+kanji_tool_catalog.add_module(kanji_api_tools)
 
 
+# --- Evaluation Suite Definition ---
 @tool_eval()
-def aakeedo_kanji_eval_suite() -> EvalSuite:
+def kanji_tools_evaluation_suite() -> EvalSuite:
+    """
+    Defines the evaluation suite for the Kanji API tools.
+    """
     suite = EvalSuite(
-        name="aakeedo_kanji Tools Evaluation",
+        name="Kanji Tools Evaluation Suite",
         system_message=(
-            "You are an AI assistant with access to aakeedo_kanji tools. "
-            "Use them to help the user with their tasks."
+            "You are a helpful AI assistant with access to a comprehensive set of Kanji tools. "
+            "Use these tools to answer user questions about Japanese Kanji characters, lists, "
+            "readings, and words. Be precise with Kanji characters and readings."
         ),
-        catalog=catalog,
-        rubric=rubric,
+        catalog=kanji_tool_catalog,
+        rubric=default_rubric,
     )
 
     suite.add_case(
-        name="Saying hello",
-        user_message="He's actually right here, say hi to him!",
-        expected_tool_calls=[ExpectedToolCall(func=say_hello, args={"name": "John Doe"})],
-        rubric=rubric,
+        name="Get details for a specific Kanji (e.g., '水' - water)",
+        user_message="Can you tell me about the kanji for water? I think it looks like 水.",
+        expected_tool_calls=[
+            ExpectedToolCall(func=get_kanji_details, args={"kanji_char": "水"})
+        ]
+    )
+
+    # --- Test Case 2: List Jōyō Kanji ---
+    suite.add_case(
+        name="List all Jōyō Kanji",
+        user_message="Please show me the list of all Jōyō kanji.",
+        expected_tool_calls=[
+            ExpectedToolCall(func=list_joyo_kanji, args={}) # No arguments for this tool
+        ],
+    )
+
+    # --- Test Case 3: Get Kanji List by Category (Grade) ---
+    suite.add_case(
+        name="Get Kanji list by category (Grade 1)",
+        user_message="Which kanji are taught in the first grade of elementary school?",
+        expected_tool_calls=[
+            ExpectedToolCall(func=get_kanji_list_by_category, args={"list_name": "grade-1"})
+        ],
         critics=[
-            SimilarityCritic(critic_field="name", weight=0.5),
+            SimilarityCritic(critic_field="list_name", weight=0.7), # Allows for variations like "1st grade" vs "grade-1"
+        ]
+    )
+
+    # --- Test Case 4: Get Kanji List by Category (JLPT Level) ---
+    suite.add_case(
+        name="Get Kanji list by category (JLPT N4)",
+        user_message="I'm studying for JLPT N4, can you list the N4 kanji for me?",
+        expected_tool_calls=[
+            ExpectedToolCall(func=get_kanji_list_by_category, args={"list_name": "jlpt-n4"})
         ],
-        additional_messages=[
-            {"role": "user", "content": "My friend's name is John Doe."},
-            {"role": "assistant", "content": "It is great that you have a friend named John Doe!"},
-        ],
+        critics=[
+            SimilarityCritic(critic_field="list_name", weight=0.7),
+        ]
+    )
+
+    # --- Test Case 5: Get Kanji by Reading ---
+    suite.add_case(
+        name="Get Kanji by a specific reading (e.g., 'かわ' - kawa)",
+        user_message="What kanji can be read as 'kawa'?",
+        expected_tool_calls=[
+            ExpectedToolCall(func=get_kanji_by_reading, args={"reading_value": "かわ"})
+        ]
     )
     
+    # --- Test Case 6: Get Kanji by another reading (On'yomi example) ---
     suite.add_case(
-        name="test wakani",
-        user_message="He's actually right here, say hi to him!",
-        expected_tool_calls=[ExpectedToolCall(func=get_user_information, args = {"name" : "nobody"})],
-        rubric=rubric,
+        name="Get Kanji by a specific On'yomi reading (e.g., 'ガク' - gaku)",
+        user_message="Find kanji with the on'yomi reading 'gaku', like in 'student'.",
+        expected_tool_calls=[
+            ExpectedToolCall(func=get_kanji_by_reading, args={"reading_value": "ガク"}) # Katakana for On'yomi
+        ],
+    )
+
+    # --- Test Case 7: Get Words for a specific Kanji ---
+    suite.add_case(
+        name="Get words using a specific Kanji (e.g., '道' - road/way)",
+        user_message="Show me some vocabulary words that use the kanji for 'road', which is 道.",
+        expected_tool_calls=[
+            ExpectedToolCall(func=get_words_for_kanji, args={"kanji_char": "道"})
+        ],
     )
 
     return suite
