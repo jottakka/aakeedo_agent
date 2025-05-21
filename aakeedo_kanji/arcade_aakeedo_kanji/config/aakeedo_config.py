@@ -10,14 +10,14 @@ class AakeedoConfig(BaseSettings):
     from a .env file if present in the application's root directory.
     """
 
-    kanji_api_base_url: HttpUrl = Field(
+    kanji_api_base_url: str = Field(
         default="https://kanjiapi.dev/v1",
         description=(
             "The base URL for the Kanji API. "
             "This value can be overridden by setting the KANJI_API_BASE_URL environment variable."
         ),
     )
-    wanikani_api_base_url: HttpUrl = Field(
+    wanikani_api_base_url: str = Field(
         default="https://api.wanikani.com/v2/", description="The base URL for the WaniKani API v2."
     )
     wanikani_api_revision: str = Field(

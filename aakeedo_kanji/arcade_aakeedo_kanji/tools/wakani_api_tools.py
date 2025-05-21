@@ -14,6 +14,9 @@ async def get_user_information(context: ToolContext) -> str:
     This information can give an indication of the user's progress and familiarity with
     Kanjis as per the WaniKani system. If the API token is missing or an error occurs
     during fetching, an appropriate message is returned.
+    
+       Returns:
+        Usar data with name and level in Wanikani app (up to 60).
     """
     api_token = context.get_secret(consts.WANIKANI_API_TOKEN_ARCADE_SECRET_ID)
 
