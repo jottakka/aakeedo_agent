@@ -36,7 +36,7 @@ select = [
     "TRY",
 ]
 
-[lint.per-file-ignores]
+[lint.per-file-ignores] 
 "**/tests/*" = ["S101"]
 
 [format]

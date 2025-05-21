@@ -1,11 +1,13 @@
-import httpx
-from typing import Optional
 import traceback
 
-from arcade_aakeedo_kanji.models.wanikani_api_models import UserResponse, UserData
-from arcade_aakeedo_kanji.config.aakeedo_config import get_env_configs
+import httpx
 
-async def fetch_wanikani_user_info(api_token: str) -> Optional[UserData]:
+from arcade_aakeedo_kanji.config.aakeedo_config import get_env_configs
+from arcade_aakeedo_kanji.models.wanikani_api_models import (UserData,
+                                                             UserResponse)
+
+
+async def fetch_wanikani_user_info(api_token: str) -> UserData | None:
     """
     Fetches user information (username and level) from the WaniKani API.
 
@@ -28,13 +30,13 @@ async def fetch_wanikani_user_info(api_token: str) -> Optional[UserData]:
         return None
 
     config = get_env_configs()
-    base_url_str = str(config.wanikani_api_base_url).rstrip('/')
+    base_url_str = str(config.wanikani_api_base_url).rstrip("/")
     endpoint = "user"
     url = f"{base_url_str}/{endpoint}"
 
     headers = {
         "Authorization": f"Bearer {api_token}",
-        "Wanikani-Revision": config.wanikani_api_revision # This comes from WaniKaniApiConfig
+        "Wanikani-Revision": config.wanikani_api_revision,  # This comes from WaniKaniApiConfig
     }
 
     print(f"DEBUG CLIENT (fetch_wanikani_user_info): Requesting URL: '{url}'")
@@ -42,40 +44,43 @@ async def fetch_wanikani_user_info(api_token: str) -> Optional[UserData]:
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(url, headers=headers)
-            
+
             response.raise_for_status()  # Raises HTTPStatusError for 4xx or 5xx responses
 
             response_json = response.json()
             user_response_model = UserResponse(**response_json)
-            
+
             return user_response_model.data
 
         except httpx.HTTPStatusError as e_http:
-            print(f"\nDEBUG: HTTPStatusError in fetch_wanikani_user_info:")
-            print(f"  Function: fetch_wanikani_user_info")
+            print("\nDEBUG: HTTPStatusError in fetch_wanikani_user_info:")
+            print("  Function: fetch_wanikani_user_info")
             print(f"  URL: {e_http.request.url}")
             print(f"  Status Code: {e_http.response.status_code}")
             try:
                 error_details = e_http.response.json()
                 print(f"  API Error Details: {error_details}")
             except Exception:
-                print(f"  Response Body (text, could not parse as JSON): {e_http.response.text[:500]}...")
+                print(
+                    f"  Response Body (text, could not parse as JSON): {e_http.response.text[:500]}..."
+                )
             return None
         except (httpx.RequestError, httpx.TimeoutException) as e_req:
-            print(f"\nDEBUG: RequestError/TimeoutException in fetch_wanikani_user_info:")
-            print(f"  Function: fetch_wanikani_user_info")
-            print(f"  URL: {e_req.request.url if hasattr(e_req, 'request') and e_req.request else 'N/A'}")
+            print("\nDEBUG: RequestError/TimeoutException in fetch_wanikani_user_info:")
+            print("  Function: fetch_wanikani_user_info")
+            print(
+                f"  URL: {e_req.request.url if hasattr(e_req, 'request') and e_req.request else 'N/A'}"
+            )
             print(f"  Exception Type: {type(e_req).__name__}")
             print(f"  Exception Args: {e_req.args}")
             print("  Traceback:")
             traceback.print_exc()
             return None
         except Exception as e:
-            print(f"\nDEBUG: Unexpected error in fetch_wanikani_user_info:")
-            print(f"  Function: fetch_wanikani_user_info")
+            print("\nDEBUG: Unexpected error in fetch_wanikani_user_info:")
+            print("  Function: fetch_wanikani_user_info")
             print(f"  Exception Type: {type(e).__name__}")
             print(f"  Exception Args: {e.args}")
             print("  Traceback:")
             traceback.print_exc()
             return None
-        

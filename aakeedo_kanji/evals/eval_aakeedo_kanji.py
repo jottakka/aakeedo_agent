@@ -1,21 +1,11 @@
 from arcade.sdk import ToolCatalog
-from arcade.sdk.eval import (
-    EvalRubric,
-    EvalSuite,
-    ExpectedToolCall,
-    SimilarityCritic,
-    tool_eval
-)
+from arcade.sdk.eval import (EvalRubric, EvalSuite, ExpectedToolCall,
+                             SimilarityCritic, tool_eval)
 
 from arcade_aakeedo_kanji.tools import kanji_api_tools
-
 from arcade_aakeedo_kanji.tools.kanji_api_tools import (
-    get_kanji_details,
-    list_joyo_kanji,
-    get_kanji_list_by_category,
-    get_kanji_by_reading,
-    get_words_for_kanji
-)
+    get_kanji_by_reading, get_kanji_details, get_kanji_list_by_category,
+    get_words_for_kanji, list_joyo_kanji)
 
 default_rubric = EvalRubric(
     fail_threshold=0.80,
@@ -46,9 +36,7 @@ def kanji_tools_evaluation_suite() -> EvalSuite:
     suite.add_case(
         name="Get details for a specific Kanji (e.g., '水' - water)",
         user_message="Can you tell me about the kanji for water? I think it looks like 水.",
-        expected_tool_calls=[
-            ExpectedToolCall(func=get_kanji_details, args={"kanji_char": "水"})
-        ]
+        expected_tool_calls=[ExpectedToolCall(func=get_kanji_details, args={"kanji_char": "水"})],
     )
 
     # --- Test Case 2: List Jōyō Kanji ---
@@ -56,7 +44,7 @@ def kanji_tools_evaluation_suite() -> EvalSuite:
         name="List all Jōyō Kanji",
         user_message="Please show me the list of all Jōyō kanji.",
         expected_tool_calls=[
-            ExpectedToolCall(func=list_joyo_kanji, args={}) # No arguments for this tool
+            ExpectedToolCall(func=list_joyo_kanji, args={})  # No arguments for this tool
         ],
     )
 
@@ -68,8 +56,10 @@ def kanji_tools_evaluation_suite() -> EvalSuite:
             ExpectedToolCall(func=get_kanji_list_by_category, args={"list_name": "grade-1"})
         ],
         critics=[
-            SimilarityCritic(critic_field="list_name", weight=0.7), # Allows for variations like "1st grade" vs "grade-1"
-        ]
+            SimilarityCritic(
+                critic_field="list_name", weight=0.7
+            ),  # Allows for variations like "1st grade" vs "grade-1"
+        ],
     )
 
     # --- Test Case 4: Get Kanji List by Category (JLPT Level) ---
@@ -81,7 +71,7 @@ def kanji_tools_evaluation_suite() -> EvalSuite:
         ],
         critics=[
             SimilarityCritic(critic_field="list_name", weight=0.7),
-        ]
+        ],
     )
 
     # --- Test Case 5: Get Kanji by Reading ---
@@ -90,15 +80,17 @@ def kanji_tools_evaluation_suite() -> EvalSuite:
         user_message="What kanji can be read as 'kawa'?",
         expected_tool_calls=[
             ExpectedToolCall(func=get_kanji_by_reading, args={"reading_value": "かわ"})
-        ]
+        ],
     )
-    
+
     # --- Test Case 6: Get Kanji by another reading (On'yomi example) ---
     suite.add_case(
         name="Get Kanji by a specific On'yomi reading (e.g., 'ガク' - gaku)",
         user_message="Find kanji with the on'yomi reading 'gaku', like in 'student'.",
         expected_tool_calls=[
-            ExpectedToolCall(func=get_kanji_by_reading, args={"reading_value": "ガク"}) # Katakana for On'yomi
+            ExpectedToolCall(
+                func=get_kanji_by_reading, args={"reading_value": "ガク"}
+            )  # Katakana for On'yomi
         ],
     )
 
@@ -106,9 +98,7 @@ def kanji_tools_evaluation_suite() -> EvalSuite:
     suite.add_case(
         name="Get words using a specific Kanji (e.g., '道' - road/way)",
         user_message="Show me some vocabulary words that use the kanji for 'road', which is 道.",
-        expected_tool_calls=[
-            ExpectedToolCall(func=get_words_for_kanji, args={"kanji_char": "道"})
-        ],
+        expected_tool_calls=[ExpectedToolCall(func=get_words_for_kanji, args={"kanji_char": "道"})],
     )
 
     return suite

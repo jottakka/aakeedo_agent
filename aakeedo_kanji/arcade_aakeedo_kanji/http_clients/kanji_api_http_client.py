@@ -1,16 +1,14 @@
-import httpx
-from typing import Optional, List
 import traceback
 
-from arcade_aakeedo_kanji.models.kanji_api_models import (
-    KanjiReading,
-    WordEntry,
-    KanjiDetailModel
-)
+import httpx
+
 from arcade_aakeedo_kanji.config import aakeedo_config
+from arcade_aakeedo_kanji.models.kanji_api_models import (KanjiDetailModel,
+                                                          KanjiReading,
+                                                          WordEntry)
 
 
-async def fetch_kanji_details(kanji_char: str) -> Optional[KanjiDetailModel]:
+async def fetch_kanji_details(kanji_char: str) -> KanjiDetailModel | None:
     """
     Fetches detailed information for a specific Japanese kanji character from the KanjiAPI.
 
@@ -57,8 +55,8 @@ async def fetch_kanji_details(kanji_char: str) -> Optional[KanjiDetailModel]:
         except (httpx.RequestError, httpx.TimeoutException):
             return None
         except Exception as e:
-            print(f"\nDEBUG: Unexpected error in fetch_kanji_details:")
-            print(f"  Function: fetch_kanji_details")
+            print("\nDEBUG: Unexpected error in fetch_kanji_details:")
+            print("  Function: fetch_kanji_details")
             print(f"  Input: kanji_char='{kanji_char}'")
             print(f"  Exception Type: {type(e).__name__}")
             print(f"  Exception Args: {e.args}")
@@ -66,7 +64,8 @@ async def fetch_kanji_details(kanji_char: str) -> Optional[KanjiDetailModel]:
             traceback.print_exc()
             return None
 
-async def fetch_joyo_kanji_list() -> Optional[List[str]]:
+
+async def fetch_joyo_kanji_list() -> list[str] | None:
     """
     Fetches the complete list of Jōyō (commonly used) kanji characters from the KanjiAPI.
 
@@ -100,9 +99,9 @@ async def fetch_joyo_kanji_list() -> Optional[List[str]]:
             if isinstance(data, list) and all(isinstance(item, str) for item in data):
                 return data
             else:
-                print(f"\nDEBUG: Unexpected data format in fetch_joyo_kanji_list.")
-                print(f"  Function: fetch_joyo_kanji_list")
-                print(f"  Expected: List of strings")
+                print("\nDEBUG: Unexpected data format in fetch_joyo_kanji_list.")
+                print("  Function: fetch_joyo_kanji_list")
+                print("  Expected: List of strings")
                 print(f"  Received Type: {type(data).__name__}")
                 return None
         except httpx.HTTPStatusError:
@@ -110,15 +109,16 @@ async def fetch_joyo_kanji_list() -> Optional[List[str]]:
         except (httpx.RequestError, httpx.TimeoutException):
             return None
         except Exception as e:
-            print(f"\nDEBUG: Unexpected error in fetch_joyo_kanji_list:")
-            print(f"  Function: fetch_joyo_kanji_list")
+            print("\nDEBUG: Unexpected error in fetch_joyo_kanji_list:")
+            print("  Function: fetch_joyo_kanji_list")
             print(f"  Exception Type: {type(e).__name__}")
             print(f"  Exception Args: {e.args}")
             print("  Traceback:")
             traceback.print_exc()
             return None
 
-async def fetch_kanji_list(list_name: str) -> Optional[List[str]]:
+
+async def fetch_kanji_list(list_name: str) -> list[str] | None:
     """
     Fetches a list of kanji by a specified category name from the KanjiAPI.
 
@@ -145,10 +145,10 @@ async def fetch_kanji_list(list_name: str) -> Optional[List[str]]:
             if isinstance(data, list) and all(isinstance(item, str) for item in data):
                 return data
             else:
-                print(f"\nDEBUG: Unexpected data format in fetch_kanji_list.")
-                print(f"  Function: fetch_kanji_list")
+                print("\nDEBUG: Unexpected data format in fetch_kanji_list.")
+                print("  Function: fetch_kanji_list")
                 print(f"  Input: list_name='{list_name}'")
-                print(f"  Expected: List of strings")
+                print("  Expected: List of strings")
                 print(f"  Received Type: {type(data).__name__}")
                 return None
         except httpx.HTTPStatusError:
@@ -156,8 +156,8 @@ async def fetch_kanji_list(list_name: str) -> Optional[List[str]]:
         except (httpx.RequestError, httpx.TimeoutException):
             return None
         except Exception as e:
-            print(f"\nDEBUG: Unexpected error in fetch_kanji_list:")
-            print(f"  Function: fetch_kanji_list")
+            print("\nDEBUG: Unexpected error in fetch_kanji_list:")
+            print("  Function: fetch_kanji_list")
             print(f"  Input: list_name='{list_name}'")
             print(f"  Exception Type: {type(e).__name__}")
             print(f"  Exception Args: {e.args}")
@@ -165,7 +165,8 @@ async def fetch_kanji_list(list_name: str) -> Optional[List[str]]:
             traceback.print_exc()
             return None
 
-async def fetch_kanji_by_reading(reading_value: str) -> Optional[KanjiReading]:
+
+async def fetch_kanji_by_reading(reading_value: str) -> KanjiReading | None:
     """
     Fetches lists of kanji associated with the supplied reading (kana).
 
@@ -192,8 +193,8 @@ async def fetch_kanji_by_reading(reading_value: str) -> Optional[KanjiReading]:
         except (httpx.RequestError, httpx.TimeoutException):
             return None
         except Exception as e:
-            print(f"\nDEBUG: Unexpected error in fetch_kanji_by_reading:")
-            print(f"  Function: fetch_kanji_by_reading")
+            print("\nDEBUG: Unexpected error in fetch_kanji_by_reading:")
+            print("  Function: fetch_kanji_by_reading")
             print(f"  Input: reading_value='{reading_value}'")
             print(f"  Exception Type: {type(e).__name__}")
             print(f"  Exception Args: {e.args}")
@@ -201,7 +202,8 @@ async def fetch_kanji_by_reading(reading_value: str) -> Optional[KanjiReading]:
             traceback.print_exc()
             return None
 
-async def fetch_words_for_kanji(kanji_char: str) -> Optional[List[WordEntry]]:
+
+async def fetch_words_for_kanji(kanji_char: str) -> list[WordEntry] | None:
     """
     Fetches a list of dictionary word entries associated with the supplied kanji character.
 
@@ -226,10 +228,10 @@ async def fetch_words_for_kanji(kanji_char: str) -> Optional[List[WordEntry]]:
                 # This list comprehension can raise Pydantic ValidationError if an item is malformed
                 return [WordEntry(**item) for item in response_data]
             else:
-                print(f"\nDEBUG: Unexpected data format in fetch_words_for_kanji.")
-                print(f"  Function: fetch_words_for_kanji")
+                print("\nDEBUG: Unexpected data format in fetch_words_for_kanji.")
+                print("  Function: fetch_words_for_kanji")
                 print(f"  Input: kanji_char='{kanji_char}'")
-                print(f"  Expected: List of word entry objects")
+                print("  Expected: List of word entry objects")
                 print(f"  Received Type: {type(response_data).__name__}")
                 return None
         except httpx.HTTPStatusError:
@@ -237,8 +239,8 @@ async def fetch_words_for_kanji(kanji_char: str) -> Optional[List[WordEntry]]:
         except (httpx.RequestError, httpx.TimeoutException):
             return None
         except Exception as e:
-            print(f"\nDEBUG: Unexpected error in fetch_words_for_kanji:")
-            print(f"  Function: fetch_words_for_kanji")
+            print("\nDEBUG: Unexpected error in fetch_words_for_kanji:")
+            print("  Function: fetch_words_for_kanji")
             print(f"  Input: kanji_char='{kanji_char}'")
             print(f"  Exception Type: {type(e).__name__}")
             print(f"  Exception Args: {e.args}")

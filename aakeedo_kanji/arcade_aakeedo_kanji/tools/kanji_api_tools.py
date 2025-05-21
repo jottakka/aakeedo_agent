@@ -1,21 +1,21 @@
 import json
-from typing import Annotated, Optional
+from typing import Annotated
 
 from arcade.sdk import tool
-from arcade.sdk.errors import ToolExecutionError, RetryableToolError
+from arcade.sdk.errors import RetryableToolError, ToolExecutionError
 
 from arcade_aakeedo_kanji.http_clients.kanji_api_http_client import (
-    fetch_kanji_details,
-    fetch_joyo_kanji_list,
-    fetch_kanji_list,
-    fetch_kanji_by_reading,
-    fetch_words_for_kanji
-)
+    fetch_joyo_kanji_list, fetch_kanji_by_reading, fetch_kanji_details,
+    fetch_kanji_list, fetch_words_for_kanji)
+
 
 @tool()
 async def get_kanji_details(
-    kanji_char: Annotated[str, "A single Japanese kanji character (e.g., '桜', '字')."]
-) -> Annotated[Optional[str], "A JSON string with kanji details (see docstring for structure), or an error is raised."]:
+    kanji_char: Annotated[str, "A single Japanese kanji character (e.g., '桜', '字')."],
+) -> Annotated[
+    str | None,
+    "A JSON string with kanji details (see docstring for structure), or an error is raised.",
+]:
     """
     Fetches detailed information for a specific Japanese kanji character.
 
@@ -32,7 +32,7 @@ async def get_kanji_details(
         raise RetryableToolError(
             f"Please provide a single, valid Japanese kanji character. The input '{kanji_char}' is not suitable.",
             developer_message=f"Invalid input for get_kanji_details: kanji_char must be a single non-whitespace string character. Received: '{kanji_char}', Cleaned: '{cleaned_kanji_char}'",
-            additional_prompt_content="The provided input for the kanji character was invalid. Please ask the user for a single, specific kanji character."
+            additional_prompt_content="The provided input for the kanji character was invalid. Please ask the user for a single, specific kanji character.",
         )
 
     result_model = await fetch_kanji_details(cleaned_kanji_char)
@@ -44,9 +44,11 @@ async def get_kanji_details(
             f"I couldn't find detailed information for the kanji '{cleaned_kanji_char}'. Please ensure it's a recognized Japanese kanji character.",
         )
 
+
 @tool()
-async def list_joyo_kanji(
-) -> Annotated[str, "A JSON string array of Jōyō kanji characters, or an error is raised."]:
+async def list_joyo_kanji() -> Annotated[
+    str, "A JSON string array of Jōyō kanji characters, or an error is raised."
+]:
     """
     Fetches the complete list of Jōyō (commonly used) kanji characters.
     Jōyō kanji are officially recognized for general use in contemporary Japanese.
@@ -63,9 +65,12 @@ async def list_joyo_kanji(
             "Sorry, I was unable to retrieve the list of Jōyō kanji at this time. There might have been an issue communicating with the Kanji API.",
         )
 
+
 @tool()
 async def get_kanji_list_by_category(
-    list_name: Annotated[str, "Category name (e.g., 'joyo', 'jinmeiyo', 'grade-1', 'jlpt-n1', 'all')."]
+    list_name: Annotated[
+        str, "Category name (e.g., 'joyo', 'jinmeiyo', 'grade-1', 'jlpt-n1', 'all')."
+    ],
 ) -> Annotated[str, "A JSON string array of kanji for the category, or an error is raised."]:
     """
     Fetches a list of kanji by a specified category name from the KanjiAPI.
@@ -84,7 +89,7 @@ async def get_kanji_list_by_category(
         raise RetryableToolError(
             f"Please provide a valid category name for the kanji list. The input '{list_name}' is empty or invalid.",
             developer_message=f"Invalid input for get_kanji_list_by_category: list_name cannot be empty. Received: '{list_name}'",
-            additional_prompt_content="A category name for the kanji list was not provided or was invalid. Please ask the user for a specific category (e.g., 'joyo', 'grade-1', 'jlpt-n3')."
+            additional_prompt_content="A category name for the kanji list was not provided or was invalid. Please ask the user for a specific category (e.g., 'joyo', 'grade-1', 'jlpt-n3').",
         )
 
     kanji_list = await fetch_kanji_list(cleaned_list_name)
@@ -95,9 +100,12 @@ async def get_kanji_list_by_category(
             f"I couldn't retrieve the kanji list for the category '{cleaned_list_name}'. Please ensure it's a recognized category name (like 'joyo', 'grade-1', 'jlpt-n3').",
         )
 
+
 @tool()
 async def get_kanji_by_reading(
-    reading_value: Annotated[str, "Japanese reading in hiragana or katakana (e.g., 'みつ', 'ニチ')."]
+    reading_value: Annotated[
+        str, "Japanese reading in hiragana or katakana (e.g., 'みつ', 'ニチ')."
+    ],
 ) -> Annotated[str, "A JSON string with kanji for the reading, or an error is raised."]:
     """
     Fetches lists of kanji associated with the supplied Japanese reading (kana).
@@ -115,7 +123,7 @@ async def get_kanji_by_reading(
         raise RetryableToolError(
             f"Please provide a Japanese reading (in hiragana or katakana) to search for. The input '{reading_value}' is empty or invalid.",
             developer_message=f"Invalid input for get_kanji_by_reading: reading_value cannot be empty. Received: '{reading_value}'",
-            additional_prompt_content="A Japanese reading was not provided or was invalid. Please ask the user for a specific reading in kana."
+            additional_prompt_content="A Japanese reading was not provided or was invalid. Please ask the user for a specific reading in kana.",
         )
 
     result_model = await fetch_kanji_by_reading(cleaned_reading_value)
@@ -126,9 +134,10 @@ async def get_kanji_by_reading(
             f"I couldn't find any kanji associated with the reading '{cleaned_reading_value}'. Please check the reading or try a different one.",
         )
 
+
 @tool()
 async def get_words_for_kanji(
-    kanji_char: Annotated[str, "A single Japanese kanji character (e.g., '蜜', '食')."]
+    kanji_char: Annotated[str, "A single Japanese kanji character (e.g., '蜜', '食')."],
 ) -> Annotated[str, "A JSON string array of word entries for the kanji, or an error is raised."]:
     """
     Fetches a list of dictionary word entries associated with the supplied kanji character.
@@ -146,9 +155,9 @@ async def get_words_for_kanji(
         raise RetryableToolError(
             f"Please provide a single, valid Japanese kanji character to find words for. Input '{kanji_char}' is not suitable.",
             developer_message=f"Invalid input for get_words_for_kanji: kanji_char must be a single non-whitespace string character. Received: '{kanji_char}', Cleaned: '{cleaned_kanji_char}'",
-            additional_prompt_content="The provided input for the kanji character was invalid. Please ask the user for a single, specific kanji character to search words for."
+            additional_prompt_content="The provided input for the kanji character was invalid. Please ask the user for a single, specific kanji character to search words for.",
         )
-        
+
     result_models = await fetch_words_for_kanji(cleaned_kanji_char)
     if result_models is not None:
         dict_list = [entry.model_dump(exclude_none=True) for entry in result_models]
