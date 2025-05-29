@@ -1,19 +1,18 @@
-from arcade.sdk import ToolCatalog
+from arcade.sdk import ToolCatalog, Toolkit
 from arcade.sdk.eval import (EvalRubric, EvalSuite, ExpectedToolCall,
                              SimilarityCritic, tool_eval)
 
-from arcade_aakeedo_kanji.tools import kanji_api_tools
 from arcade_aakeedo_kanji.tools.kanji_api_tools import (
     get_kanji_by_reading, get_kanji_details, get_kanji_list_by_category,
     get_words_for_kanji, list_joyo_kanji)
+
+kanji_tool_catalog = ToolCatalog()
+kanji_tool_catalog.add_toolkit(Toolkit.from_package("arcade_aakeedo_kanji"))
 
 default_rubric = EvalRubric(
     fail_threshold=0.80,
     warn_threshold=0.90,
 )
-
-kanji_tool_catalog = ToolCatalog()
-kanji_tool_catalog.add_module(kanji_api_tools)
 
 
 # --- Evaluation Suite Definition ---
