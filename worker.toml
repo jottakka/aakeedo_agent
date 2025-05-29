@@ -1,0 +1,10 @@
+[[worker]]
+
+[worker.config]
+id = "arcade_aakeedo_kanji"
+enabled = true
+timeout = 30
+retries = 3
+secret = "6cd06929e79a11dc45366da58b277dac"
+[worker.local_source]
+packages = ["."]
