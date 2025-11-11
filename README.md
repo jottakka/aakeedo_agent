@@ -4,7 +4,7 @@
 
   
 
-This agent is aimed to help Japanese learners improve their knowledge about Kanjis. It currently uses the [https://kanjiapi.dev/](https://kanjiapi.dev/) API and also the WaniKani API (primarily for retrieving basic user data at the moment).
+!This agent is aimed to help Japanese learners improve their knowledge about Kanjis. It currently uses the [https://kanjiapi.dev/](https://kanjiapi.dev/) API and also the WaniKani API (primarily for retrieving basic user data at the moment).
 
   
 
